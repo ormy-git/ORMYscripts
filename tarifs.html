@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tarifs — ORMYScripts</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07080b;--bg2:#0d0f16;--surface:#12141d;--surface2:#181b28;--border:rgba(255,255,255,0.07);--accent:#00e5a0;--accent-d:#00b87d;--violet:#7b5ea7;--amber:#e8a838;--text:#eef0f5;--muted:#636978;--muted2:#959aaa}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:400;line-height:1.6;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:.022}
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;height:62px;background:rgba(7,8,11,0.88);backdrop-filter:blur(22px);border-bottom:1px solid var(--border)}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.25rem;letter-spacing:-.02em;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:.45rem}
+.logo span{color:var(--accent)}
+.logo-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2.2s ease-in-out infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.65)}}
+.nav-links{display:flex;align-items:center;gap:1.8rem;list-style:none}
+.nav-links a{color:var(--muted2);text-decoration:none;font-size:.875rem;font-weight:500;padding:.3rem 0;border-bottom:2px solid transparent;transition:all .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--text);border-color:var(--accent)}
+.nav-links a.active{color:var(--accent)}
+.nav-cta{display:flex;align-items:center;gap:.65rem}
+.btn-ghost{color:var(--muted2);text-decoration:none;font-size:.85rem;font-weight:500;padding:.45rem .9rem;border:1px solid var(--border);border-radius:8px;transition:all .2s}
+.btn-ghost:hover{color:var(--text);border-color:rgba(255,255,255,.2)}
+.btn-primary{background:var(--accent);color:#07080b;text-decoration:none;font-size:.85rem;font-weight:700;padding:.45rem 1.1rem;border-radius:8px;transition:all .2s}
+.btn-primary:hover{background:var(--accent-d);transform:translateY(-1px)}
+.hamburger{display:none;background:none;border:1px solid var(--border);color:var(--text);padding:.35rem .65rem;border-radius:6px;cursor:pointer;font-size:1.1rem}
+.mobile-menu{display:none;position:fixed;inset:0;z-index:190;background:rgba(7,8,11,.97);backdrop-filter:blur(20px);flex-direction:column;align-items:center;justify-content:center;gap:2rem}
+.mobile-menu.open{display:flex}
+.mobile-menu a{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:700;color:var(--text);text-decoration:none;letter-spacing:-.03em;transition:color .2s}
+.mobile-menu a:hover,.mobile-menu a.active{color:var(--accent)}
+.close-btn{position:absolute;top:1.2rem;right:1.5rem;background:none;border:none;color:var(--muted2);font-size:1.8rem;cursor:pointer}
+.container{max-width:1100px;margin:0 auto;padding:0 2rem}
+section{position:relative;z-index:1}
+h1{font-family:'Syne',sans-serif;font-size:clamp(2.2rem,5vw,4rem);font-weight:800;letter-spacing:-.04em;line-height:1.06}
+h2{font-family:'Syne',sans-serif;font-size:clamp(1.5rem,3vw,2.3rem);font-weight:800;letter-spacing:-.035em;line-height:1.1}
+h3{font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.02em}
+.section-label{display:inline-flex;align-items:center;gap:.5rem;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:.9rem}
+.section-label::before{content:'';width:18px;height:2px;background:var(--accent)}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .65s ease,transform .65s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.text-muted{color:var(--muted2)}
+.btn-lg{padding:.8rem 1.9rem;font-size:.95rem;border-radius:10px;font-weight:700;display:inline-block;text-decoration:none}
+.btn-outline-lg{padding:.8rem 1.9rem;font-size:.95rem;border-radius:10px;font-weight:500;color:var(--muted2);border:1px solid var(--border);text-decoration:none;transition:all .2s;display:inline-block}
+.btn-outline-lg:hover{color:var(--text);border-color:rgba(255,255,255,.22)}
+
+/* PAGE HERO */
+.page-hero{padding:9rem 2rem 5rem;text-align:center;position:relative;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(120px);pointer-events:none}
+.orb-1{width:500px;height:500px;background:radial-gradient(circle,rgba(232,168,56,.1) 0%,transparent 70%);top:-150px;left:50%;transform:translateX(-50%)}
+.page-hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(232,168,56,.08);border:1px solid rgba(232,168,56,.2);border-radius:100px;padding:.3rem 1rem;font-size:.76rem;font-weight:600;color:var(--amber);margin-bottom:1.5rem;letter-spacing:.04em;text-transform:uppercase}
+.page-hero-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--amber)}
+.page-hero p{color:var(--muted2);font-size:1.05rem;max-width:540px;margin:1.2rem auto 0;line-height:1.7}
+.ht-note{display:inline-flex;align-items:center;gap:.4rem;margin-top:1.2rem;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:100px;padding:.3rem .9rem;font-size:.78rem;color:var(--muted2)}
+
+/* MODE TABS */
+.mode-tabs{display:flex;gap:0;margin-bottom:3rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px;width:fit-content}
+.mode-tab{padding:.55rem 1.4rem;border-radius:7px;font-size:.875rem;font-weight:600;cursor:pointer;border:none;background:none;color:var(--muted2);transition:all .2s}
+.mode-tab.active{background:var(--accent);color:#07080b}
+.mode-tab:not(.active):hover{color:var(--text)}
+
+/* MAIN PRICING TABLE */
+.pricing-section{padding:6rem 0}
+.pricing-intro{text-align:center;margin-bottom:3.5rem}
+.pricing-intro h2{margin-bottom:.5rem}
+
+/* TABLE WRAPPER */
+.table-wrapper{overflow-x:auto;border-radius:16px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;background:var(--bg)}
+thead tr{background:var(--surface2)}
+th{padding:1rem 1.25rem;text-align:left;font-family:'Syne',sans-serif;font-size:.82rem;font-weight:700;color:var(--muted2);letter-spacing:.04em;text-transform:uppercase;border-bottom:1px solid var(--border);white-space:nowrap}
+th:first-child{color:var(--text)}
+td{padding:1rem 1.25rem;border-bottom:1px solid var(--border);font-size:.9rem;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.025)}
+.prest-name{font-weight:600;color:var(--text);display:flex;align-items:center;gap:.6rem}
+.prest-name .emoji{font-size:1.05rem}
+.prest-desc{font-size:.78rem;color:var(--muted2);margin-top:.15rem;font-weight:400}
+.price-cell{text-align:right;font-weight:700;color:var(--text)}
+.price-cell .price{font-family:'Syne',sans-serif;font-size:1.05rem;color:var(--accent)}
+.price-cell .unit{font-size:.72rem;color:var(--muted2);font-weight:400}
+.price-na{text-align:right;color:var(--muted);font-size:.82rem;font-style:italic}
+.category-row td{background:var(--surface2);padding:.6rem 1.25rem}
+.category-row td span{font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted2)}
+.badge-pop{display:inline-flex;align-items:center;gap:.3rem;background:rgba(232,168,56,.12);border:1px solid rgba(232,168,56,.25);border-radius:5px;padding:.1rem .5rem;font-size:.65rem;font-weight:700;color:var(--amber);letter-spacing:.04em;text-transform:uppercase;margin-left:.5rem}
+.badge-new{display:inline-flex;align-items:center;gap:.3rem;background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.2);border-radius:5px;padding:.1rem .5rem;font-size:.65rem;font-weight:700;color:var(--accent);letter-spacing:.04em;text-transform:uppercase;margin-left:.5rem}
+.col-header-site{color:var(--accent) !important}
+.col-header-visio2h,.col-header-visio4h{color:#a58fd4 !important}
+
+/* FORFAITS */
+.forfaits-section{padding:4rem 0 6rem;background:var(--bg2);border-top:1px solid var(--border)}
+.forfaits-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3.5rem}
+.forfait-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2rem;position:relative;transition:all .25s}
+.forfait-card.featured{border-color:rgba(0,229,160,.35);background:linear-gradient(135deg,rgba(0,229,160,.06),transparent)}
+.forfait-card:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(0,0,0,.4)}
+.forfait-pop{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:#07080b;font-size:.7rem;font-weight:800;padding:.3rem 1rem;border-radius:100px;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap}
+.forfait-card h3{font-size:1.2rem;margin-bottom:.35rem}
+.forfait-card .subtitle{color:var(--muted2);font-size:.85rem;margin-bottom:1.5rem}
+.forfait-price{margin-bottom:1.5rem}
+.forfait-price .amount{font-family:'Syne',sans-serif;font-size:2.5rem;font-weight:800;letter-spacing:-.04em;color:var(--accent)}
+.forfait-price .period{color:var(--muted2);font-size:.85rem}
+.forfait-price .base{font-size:.78rem;color:var(--muted);margin-top:.15rem}
+.forfait-feats{display:flex;flex-direction:column;gap:.55rem;margin-bottom:1.75rem}
+.forfait-feat{display:flex;align-items:flex-start;gap:.6rem;font-size:.855rem;color:var(--muted2)}
+.forfait-feat::before{content:'✓';color:var(--accent);font-weight:700;flex-shrink:0;margin-top:1px}
+.btn-forfait{display:block;text-align:center;padding:.75rem;border-radius:9px;font-size:.9rem;font-weight:700;text-decoration:none;transition:all .2s}
+.btn-forfait-primary{background:var(--accent);color:#07080b}
+.btn-forfait-primary:hover{background:var(--accent-d)}
+.btn-forfait-outline{border:1px solid var(--border);color:var(--muted2)}
+.btn-forfait-outline:hover{border-color:rgba(255,255,255,.2);color:var(--text)}
+
+/* FAQ */
+.faq-section{padding:6rem 0}
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-top:3rem}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:1.5rem;cursor:pointer;transition:border-color .2s}
+.faq-item:hover{border-color:rgba(0,229,160,.2)}
+.faq-q{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;margin-bottom:.6rem;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem}
+.faq-q .arrow{color:var(--accent);flex-shrink:0;font-size:1rem;transition:transform .2s}
+.faq-item.open .faq-q .arrow{transform:rotate(45deg)}
+.faq-a{color:var(--muted2);font-size:.87rem;line-height:1.65;display:none}
+.faq-item.open .faq-a{display:block}
+
+/* CTA */
+.cta-section{padding:6rem 0}
+.cta-box{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:4.5rem 3rem;text-align:center;overflow:hidden}
+.cta-box::before{content:'';position:absolute;inset:-1px;background:linear-gradient(135deg,rgba(232,168,56,.1),transparent 50%,rgba(0,229,160,.08));border-radius:inherit;z-index:0}
+.cta-box>*{position:relative;z-index:1}
+.cta-box h2{margin-bottom:.9rem}
+.cta-box p{color:var(--muted2);margin-bottom:2.2rem;max-width:420px;margin-left:auto;margin-right:auto}
+.cta-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:4rem 0 2rem;position:relative;z-index:1}
+.footer-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem}
+.footer-brand p{color:var(--muted);font-size:.85rem;line-height:1.65;margin-top:.75rem;max-width:210px}
+.footer-col h4{font-family:'Syne',sans-serif;font-size:.85rem;font-weight:700;margin-bottom:1rem}
+.footer-col a{display:block;color:var(--muted);font-size:.85rem;text-decoration:none;margin-bottom:.45rem;transition:color .2s}
+.footer-col a:hover{color:var(--text)}
+.footer-bottom{border-top:1px solid var(--border);padding-top:1.8rem;display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:.78rem;flex-wrap:wrap;gap:1rem}
+.footer-links{display:flex;gap:1.4rem}
+.footer-links a{color:var(--muted);text-decoration:none;font-size:.78rem}
+.footer-links a:hover{color:var(--text)}
+
+@media(max-width:900px){
+  .nav-links,.nav-cta{display:none}.hamburger{display:block}
+  .forfaits-grid{grid-template-columns:1fr}
+  .faq-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  th,td{padding:.75rem .9rem}
+}
+@media(max-width:580px){
+  nav{padding:0 1.2rem}
+  .footer-grid{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo"><div class="logo-dot"></div>ORMY<span>Scripts</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Accueil</a></li>
+    <li><a href="automatisations.html">Automatisations</a></li>
+    <li><a href="prestations.html">Prestations</a></li>
+    <li><a href="tarifs.html" class="active">Tarifs</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="#table-tarifs" class="btn-ghost">Voir les tarifs</a>
+    <a href="/cdn-cgi/l/email-protection#d6b5b9b8a2b7b5a296b9a4bbafa5b5a4bfa6a2a5f8b0a4" class="btn-primary">Nous contacter</a>
+  </div>
+  <button class="hamburger" onclick="document.getElementById('mob').classList.add('open')">☰</button>
+</nav>
+<div class="mobile-menu" id="mob">
+  <button class="close-btn" onclick="document.getElementById('mob').classList.remove('open')">✕</button>
+  <a href="index.html">Accueil</a>
+  <a href="automatisations.html">Automatisations</a>
+  <a href="prestations.html">Prestations</a>
+  <a href="tarifs.html" class="active">Tarifs</a>
+  <a href="/cdn-cgi/l/email-protection#f2919d9c86939186b29d809f8b8191809b828681dc9480" style="color:var(--accent)">Nous contacter</a>
+</div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="orb orb-1"></div>
+  <div class="page-hero-badge">Tarifs transparents</div>
+  <h1>Des tarifs clairs,<br><span style="color:var(--accent)">sans surprise.</span></h1>
+  <p>Taux horaire sur site, sessions en visio 2h ou demi-journée — choisissez la formule adaptée à votre besoin.</p>
+  <div>
+    <div class="ht-note">💡 Tous les tarifs sont indiqués en euros HT</div>
+  </div>
+</section>
+
+<!-- TABLE TARIFS -->
+<section class="pricing-section" id="table-tarifs">
+  <div class="container">
+    <div class="pricing-intro reveal">
+      <div class="section-label" style="justify-content:center">Grille tarifaire complète</div>
+      <h2>Tarifs par prestation</h2>
+      <p class="text-muted" style="margin-top:.5rem">Sur site (taux horaire) · Visio 2h · Visio demi-journée (4h)</p>
+    </div>
+
+    <div class="table-wrapper reveal" style="transition-delay:.1s">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:36%">Prestation</th>
+            <th class="col-header-site" style="text-align:right">Sur site<br><span style="font-weight:400;color:var(--muted)">Taux horaire</span></th>
+            <th class="col-header-visio2h" style="text-align:right">Visio 2h<br><span style="font-weight:400;color:var(--muted)">Session fixe</span></th>
+            <th class="col-header-visio4h" style="text-align:right">Visio ½ journée<br><span style="font-weight:400;color:var(--muted)">4h · meilleur tarif</span></th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- AUTOMATISATIONS -->
+          <tr class="category-row"><td colspan="4"><span>⚡ Automatisations & Développement</span></td></tr>
+          <tr>
+            <td><div class="prest-name"><span class="emoji">🐍</span>Développement de script sur mesure</div><div class="prest-desc">Python, Bash, JS — analyse, code, tests, livraison</div></td>
+            <td class="price-cell"><div class="price">90 €</div><div class="unit">/ heure HT</div></td>
+            <td class="price-cell"><div class="price">160 €</div><div class="unit">/ session 2h HT</div></td>
+            <td class="price-cell"><div class="price">280 €</div><div class="unit">/ ½ journée HT</div></td>
+          </tr>
+          <tr>
+            <td><div class="prest-name"><span class="emoji">🔄</span>Workflow & pipeline de données <span class="badge-pop">Populaire</span></div><div class="prest-desc">ETL, synchronisation, orchestration Airflow / Cron</div></td>
+            <td class="price-cell"><div class="price">95 €</div><div class="unit">/ heure HT</div></td>
+            <td class="price-cell"><div class="price">170 €</div><div class="unit">/ session 2h HT</div></td>
+            <td class="price-cell"><div class="price">300 €</div><div class="unit">/ ½ journée HT</div></td>
+          </tr>
+          <tr>
+            <td><div class="prest-name"><span class="emoji">🔌</span>Connecteur API & intégration</div><div class="prest-desc">REST, webhooks, OAuth — connexion entre vos outils</div></td>
+            <td class="price-cell"><div class="price">90 €</div><div class="unit">/ heure HT</div></td>
+            <td class="price-cell"><div class="price">160 €</div><div class="unit">/ session 2h HT</div></td>
+            <td class="price-cell"><div class="price">285 €</div><div class="unit">/ ½ journée HT</div></td>
+          </tr>
+          <tr>
+            <td><div class="prest-name"><span class="emoji">🚀</span>Mise en place CI/CD</div><div class="prest-desc">GitHub Actions, Docker, déploiement automatisé</div></td>
+            <td class="price-cell"><div class="price">95 €</div><div class="unit">/ heure HT</div></td>
+            <td class="price-cell"><div class="price">170 €</div><div class="unit">/ session 2h HT</div></td>
+            <td class="price-cell"><div class="price">305 €</div><div class="unit">/ ½ journée HT</div></td>
+          </tr>
+
+          <!-- MAINTENANCE -->
+          <tr class="category-row"><td colspan="4"><span>🛠️ Maintenance & Support</span></td></tr>
+          <tr>
+            <td><div class="prest-name"><span class="emoji">🔧</span>Maintenance corrective</div><div class="prest-desc">Diagnostic et correction de scripts / outils en panne</div></td>
+            <td class="price-cell"><div class="price">80 €</div><div class="unit">/ heure HT</div></td>
+            <td class="price-cell"><div class="price">145 €</div><div class="unit">/ session 2h HT</div></td>
+            <td class="price-cell"><div class="price">250 €</div><div class="unit">/ ½ journée HT</div></td>
+          </tr>
+          <tr>
+            <td><div class="prest-name"><span class="emoji">🛡️</span>Maintenance préventive</div><div class="prest-desc">Revue, mises à jour, monitoring et optimisation</div></td>
+            <td class="price-cell"><div class="price">75 €</div><div class="unit">/ heure HT</div></td>
+            <td class="price-cell"><div class="price">130 €</div><div class="unit">/ session 2h HT</div></td>
+            <td class="price-cell"><div class="price">230 €</div><div class="unit">/ ½ journée HT</div></td>
+          </tr>
+          <tr>
+            <td><div class="prest-name"><span class="emoji">🗄️</span>Migration de données</div><div class="prest-desc">Transfert sécurisé entre bases de données / outils</div></td>
+            <td class="price-cell"><div class="price">90 €</div><div class="unit">/ heure HT</div></td>
+            <td class="price-cell"><div class="price">160 €</div><div class="unit">/ session 2h HT</div></td>
+            <td class="price-cell"><div class="price">285 €</div><div class="unit">/ ½ journée HT</div></td>
+          </tr>
+
+          <!-- FORMATION -->
+          <tr class="category-row"><td colspan="4"><span>🎓 Formation & Accompagnement</span></td></tr>
+          <tr>
+            <td><div class="prest-name"><span class="emoji">💻</span>Formation technique sur site <span class="badge-pop">Populaire</span></div><div class="prest-desc">Formation adaptée à votre équipe et vos outils</div></td>
+            <td class="price-cell"><div class="price">85 €</div><div class="unit">/ heure HT</div></td>
+            <td class="price-na">—</td>
+            <td class="price-na">—</td>
+          </tr>
+          <tr>
+            <td><div class="prest-name"><span class="emoji">📹</span>Formation en visio</div><div class="prest-desc">Session interactive avec partage d'écran, Q&A inclus</div></td>
+            <td class="price-na">—</td>
+            <td class="price-cell"><div class="price">120 €</div><div class="unit">/ session 2h HT</div></td>
+            <td class="price-cell"><div class="price">210 €</div><div class="unit">/ ½ journée HT</div></td>
+          </tr>
+          <tr>
+            <td><div class="prest-name"><span class="emoji">📚</span>Coaching individuel</div><div class="prest-desc">One-to-one, plan de progression personnalisé</div></td>
+            <td class="price-cell"><div class="price">90 €</div><div class="unit">/ heure HT</div></td>
+            <td class="price-cell"><div class="price">155 €</div><div class="unit">/ session 2h HT</div></td>
+            <td class="price-na">—</td>
+          </tr>
+
+          <!-- AUDIT -->
+          <tr class="category-row"><td colspan="4"><span>🔎 Audit & Conseil</span></td></tr>
+          <tr>
+            <td><div class="prest-name"><span class="emoji">🔐</span>Audit sécurité & RGPD</div><div class="prest-desc">Revue complète : accès, données, conformité</div></td>
+            <td class="price-cell"><div class="price">100 €</div><div class="unit">/ heure HT</div></td>
+            <td class="price-cell"><div class="price">180 €</div><div class="unit">/ session 2h HT</div></td>
+            <td class="price-cell"><div class="price">320 €</div><div class="unit">/ ½ journée HT</div></td>
+          </tr>
+          <tr>
+            <td><div class="prest-name"><span class="emoji">⚙️</span>Audit d'automatisation <span class="badge-new">Offert*</span></div><div class="prest-desc">Cartographie processus + roadmap de gains — *1ère heure offerte</div></td>
+            <td class="price-cell"><div class="price">85 €</div><div class="unit">/ heure HT</div></td>
+            <td class="price-cell"><div class="price">150 €</div><div class="unit">/ session 2h HT</div></td>
+            <td class="price-cell"><div class="price">265 €</div><div class="unit">/ ½ journée HT</div></td>
+          </tr>
+          <tr>
+            <td><div class="prest-name"><span class="emoji">🏗️</span>Conseil en architecture</div><div class="prest-desc">Choix technologiques, stack, plan de migration</div></td>
+            <td class="price-cell"><div class="price">100 €</div><div class="unit">/ heure HT</div></td>
+            <td class="price-cell"><div class="price">180 €</div><div class="unit">/ session 2h HT</div></td>
+            <td class="price-cell"><div class="price">320 €</div><div class="unit">/ ½ journée HT</div></td>
+          </tr>
+
+          <!-- REPORTING -->
+          <tr class="category-row"><td colspan="4"><span>📊 Reporting & Dashboards</span></td></tr>
+          <tr>
+            <td><div class="prest-name"><span class="emoji">📈</span>Rapport automatique (Excel / PDF)</div><div class="prest-desc">Génération, mise en forme et envoi planifié</div></td>
+            <td class="price-cell"><div class="price">80 €</div><div class="unit">/ heure HT</div></td>
+            <td class="price-cell"><div class="price">140 €</div><div class="unit">/ session 2h HT</div></td>
+            <td class="price-cell"><div class="price">245 €</div><div class="unit">/ ½ journée HT</div></td>
+          </tr>
+          <tr>
+            <td><div class="prest-name"><span class="emoji">📊</span>Dashboard temps réel</div><div class="prest-desc">Grafana, Metabase ou solution custom connectée à vos données</div></td>
+            <td class="price-cell"><div class="price">90 €</div><div class="unit">/ heure HT</div></td>
+            <td class="price-cell"><div class="price">160 €</div><div class="unit">/ session 2h HT</div></td>
+            <td class="price-cell"><div class="price">280 €</div><div class="unit">/ ½ journée HT</div></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+    <p style="color:var(--muted);font-size:.78rem;margin-top:1rem;text-align:right">* Frais de déplacement en sus pour les interventions sur site hors région. TVA applicable selon statut. Devis sur mesure sur demande.</p>
+  </div>
+</section>
+
+<!-- FORFAITS -->
+<section class="forfaits-section">
+  <div class="container">
+    <div class="reveal" style="text-align:center">
+      <div class="section-label" style="justify-content:center">Forfaits mensuels</div>
+      <h2>Engagez-vous sur la durée,<br><span class="text-muted">bénéficiez de tarifs préférentiels.</span></h2>
+      <p class="text-muted" style="margin-top:.5rem">Idéal pour une collaboration continue. Heures incluses chaque mois, priorité de traitement.</p>
+    </div>
+    <div class="forfaits-grid reveal" style="transition-delay:.1s">
+      <div class="forfait-card">
+        <h3>🌱 Starter</h3>
+        <div class="subtitle">Pour les petites structures</div>
+        <div class="forfait-price">
+          <div class="amount">390 €</div>
+          <div class="period">/ mois HT</div>
+          <div class="base">5h incluses · soit 78 €/h</div>
+        </div>
+        <div class="forfait-feats">
+          <div class="forfait-feat">5 heures de prestations / mois</div>
+          <div class="forfait-feat">Maintenance corrective incluse</div>
+          <div class="forfait-feat">Réponse sous 48h ouvrées</div>
+          <div class="forfait-feat">Rapport mensuel d'activité</div>
+          <div class="forfait-feat">1 session visio 1h / mois</div>
+        </div>
+        <a href="/cdn-cgi/l/email-protection#56353938223735221639243b2f2535243f262225783024692523343c3335226b10392430373f227605223724223324" class="btn-forfait btn-forfait-outline">Choisir Starter</a>
+      </div>
+      <div class="forfait-card featured">
+        <div class="forfait-pop">⭐ Le plus choisi</div>
+        <h3>🚀 Essentiel</h3>
+        <div class="subtitle">Pour les équipes actives</div>
+        <div class="forfait-price">
+          <div class="amount">720 €</div>
+          <div class="period">/ mois HT</div>
+          <div class="base">10h incluses · soit 72 €/h</div>
+        </div>
+        <div class="forfait-feats">
+          <div class="forfait-feat">10 heures de prestations / mois</div>
+          <div class="forfait-feat">Maintenance corrective + préventive</div>
+          <div class="forfait-feat">Réponse sous 24h ouvrées</div>
+          <div class="forfait-feat">Rapport mensuel détaillé</div>
+          <div class="forfait-feat">2 sessions visio 1h / mois</div>
+          <div class="forfait-feat">Priorité sur les nouvelles demandes</div>
+        </div>
+        <a href="/cdn-cgi/l/email-protection#3a5955544e5b594e7a55485743495948534a4e49145c4805494f58505f594e077c55485c5b534e1a7f49495f544e535f56" class="btn-forfait btn-forfait-primary">Choisir Essentiel</a>
+      </div>
+      <div class="forfait-card">
+        <h3>🏢 Business</h3>
+        <div class="subtitle">Pour les entreprises exigeantes</div>
+        <div class="forfait-price">
+          <div class="amount">1 300 €</div>
+          <div class="period">/ mois HT</div>
+          <div class="base">20h incluses · soit 65 €/h</div>
+        </div>
+        <div class="forfait-feats">
+          <div class="forfait-feat">20 heures de prestations / mois</div>
+          <div class="forfait-feat">Toutes prestations incluses</div>
+          <div class="forfait-feat">Réponse sous 4h ouvrées</div>
+          <div class="forfait-feat">Reporting hebdomadaire</div>
+          <div class="forfait-feat">Sessions visio illimitées</div>
+          <div class="forfait-feat">Responsable de compte dédié</div>
+          <div class="forfait-feat">Formation trimestrielle offerte</div>
+        </div>
+        <a href="/cdn-cgi/l/email-protection#c9aaa6a7bda8aabd89a6bba4b0baaabba0b9bdbae7afbbf6babcaba3acaabdf48fa6bbafa8a0bde98bbcbaa0a7acbaba" class="btn-forfait btn-forfait-outline">Choisir Business</a>
+      </div>
+    </div>
+    <p style="text-align:center;color:var(--muted);font-size:.8rem;margin-top:2rem">Engagements 3 mois minimum · Heures non utilisées reportables le mois suivant · Résiliation avec 1 mois de préavis</p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="container">
+    <div class="reveal" style="text-align:center">
+      <div class="section-label" style="justify-content:center">Questions fréquentes</div>
+      <h2>Tout ce que vous devez savoir.</h2>
+    </div>
+    <div class="faq-grid reveal" style="transition-delay:.1s">
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">Comment se déroule une session visio ?<span class="arrow">+</span></div>
+        <div class="faq-a">Une session visio se fait via Zoom, Teams ou Google Meet selon votre préférence. On convient d'un créneau ensemble, puis on partage nos écrans pour travailler directement sur vos outils. Chaque session se termine par un compte-rendu et les prochaines étapes.</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">Les frais de déplacement sont-ils inclus ?<span class="arrow">+</span></div>
+        <div class="faq-a">Les déplacements dans un rayon de 30 km sont inclus dans le taux horaire sur site. Au-delà, les frais kilométriques (barème fiscal) et les éventuels frais de transport / hébergement sont facturés en supplément, toujours avec accord préalable.</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">Peut-on avoir un devis sur mesure ?<span class="arrow">+</span></div>
+        <div class="faq-a">Absolument ! Pour les projets complexes ou de longue durée, nous préférons établir un devis au forfait global plutôt qu'au taux horaire. Contactez-nous avec une description de votre projet et nous revenons vers vous sous 48h.</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">Quelle est la durée minimale d'intervention ?<span class="arrow">+</span></div>
+        <div class="faq-a">Sur site, la durée minimale facturée est de 2h. En visio, les sessions sont vendues par blocs de 2h ou demi-journée (4h). Pas de facturation à la minute — on se concentre sur la valeur livrée, pas sur le chronomètre.</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">Quels modes de paiement acceptez-vous ?<span class="arrow">+</span></div>
+        <div class="faq-a">Virement bancaire (SEPA), carte bancaire via lien de paiement sécurisé, et chèque pour les montants inférieurs à 500 €. Paiement à 30 jours fin de mois pour les clients sous contrat. Acompte de 30% pour les nouveaux clients.</div>
+      </div>
+      <div class="faq-item" onclick="this.classList.toggle('open')">
+        <div class="faq-q">L'audit d'automatisation est-il vraiment offert ?<span class="arrow">+</span></div>
+        <div class="faq-a">Oui ! La première heure de l'audit d'automatisation est offerte pour les nouveaux clients. C'est l'occasion de faire connaissance, d'explorer vos processus et de voir si une collaboration a du sens — sans engagement de votre part.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-box reveal">
+      <div class="section-label" style="justify-content:center">Démarrer</div>
+      <h2>Un projet en tête ?<br>Parlons-en.</h2>
+      <p>Premier échange gratuit. Nous revenons vers vous sous 24h avec une estimation claire.</p>
+      <div class="cta-actions">
+        <a href="/cdn-cgi/l/email-protection#f4979b9a80959780b49b86998d8797869d848087da9286" class="btn-primary btn-lg">Demander un devis →</a>
+        <a href="prestations.html" class="btn-outline-lg">Voir les prestations</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" class="logo" style="font-size:1.1rem"><div class="logo-dot"></div>ORMY<span>Scripts</span></a>
+        <p>Scripts intelligents & automatisation pour les entreprises modernes. Basé en France.</p>
+      </div>
+      <div class="footer-col"><h4>Navigation</h4><a href="index.html">Accueil</a><a href="automatisations.html">Automatisations</a><a href="prestations.html">Prestations</a><a href="tarifs.html">Tarifs</a></div>
+      <div class="footer-col"><h4>Services</h4><a href="prestations.html#maintenance">Maintenance</a><a href="prestations.html#formation">Formation</a><a href="prestations.html#audit">Audit & Conseil</a><a href="prestations.html#integration">Intégrations</a></div>
+      <div class="footer-col"><h4>Contact</h4><a href="/cdn-cgi/l/email-protection#85e6eaebf1e4e6f1c5eaf7e8fcf6e6f7ecf5f1f6abe3f7"><span class="__cf_email__" data-cfemail="9cfff3f2e8fdffe8dcf3eef1e5efffeef5ece8efb2faee">[email&#160;protected]</span></a><a href="#">Demander un devis</a></di

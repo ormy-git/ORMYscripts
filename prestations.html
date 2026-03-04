@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prestations — ORMYScripts</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07080b;--bg2:#0d0f16;--surface:#12141d;--surface2:#181b28;--border:rgba(255,255,255,0.07);--accent:#00e5a0;--accent-d:#00b87d;--violet:#7b5ea7;--amber:#e8a838;--text:#eef0f5;--muted:#636978;--muted2:#959aaa}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:400;line-height:1.6;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:.022}
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;height:62px;background:rgba(7,8,11,0.88);backdrop-filter:blur(22px);border-bottom:1px solid var(--border)}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.25rem;letter-spacing:-.02em;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:.45rem}
+.logo span{color:var(--accent)}
+.logo-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2.2s ease-in-out infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.65)}}
+.nav-links{display:flex;align-items:center;gap:1.8rem;list-style:none}
+.nav-links a{color:var(--muted2);text-decoration:none;font-size:.875rem;font-weight:500;padding:.3rem 0;border-bottom:2px solid transparent;transition:all .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--text);border-color:var(--accent)}
+.nav-links a.active{color:var(--accent)}
+.nav-cta{display:flex;align-items:center;gap:.65rem}
+.btn-ghost{color:var(--muted2);text-decoration:none;font-size:.85rem;font-weight:500;padding:.45rem .9rem;border:1px solid var(--border);border-radius:8px;transition:all .2s}
+.btn-ghost:hover{color:var(--text);border-color:rgba(255,255,255,.2)}
+.btn-primary{background:var(--accent);color:#07080b;text-decoration:none;font-size:.85rem;font-weight:700;padding:.45rem 1.1rem;border-radius:8px;transition:all .2s}
+.btn-primary:hover{background:var(--accent-d);transform:translateY(-1px)}
+.hamburger{display:none;background:none;border:1px solid var(--border);color:var(--text);padding:.35rem .65rem;border-radius:6px;cursor:pointer;font-size:1.1rem}
+.mobile-menu{display:none;position:fixed;inset:0;z-index:190;background:rgba(7,8,11,.97);backdrop-filter:blur(20px);flex-direction:column;align-items:center;justify-content:center;gap:2rem}
+.mobile-menu.open{display:flex}
+.mobile-menu a{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:700;color:var(--text);text-decoration:none;letter-spacing:-.03em;transition:color .2s}
+.mobile-menu a:hover,.mobile-menu a.active{color:var(--accent)}
+.close-btn{position:absolute;top:1.2rem;right:1.5rem;background:none;border:none;color:var(--muted2);font-size:1.8rem;cursor:pointer}
+.container{max-width:1180px;margin:0 auto;padding:0 2rem}
+section{position:relative;z-index:1}
+h1{font-family:'Syne',sans-serif;font-size:clamp(2.2rem,5vw,4.2rem);font-weight:800;letter-spacing:-.04em;line-height:1.06}
+h2{font-family:'Syne',sans-serif;font-size:clamp(1.6rem,3vw,2.5rem);font-weight:800;letter-spacing:-.035em;line-height:1.1}
+h3{font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.02em}
+.section-label{display:inline-flex;align-items:center;gap:.5rem;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:.9rem}
+.section-label::before{content:'';width:18px;height:2px;background:var(--accent)}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .65s ease,transform .65s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.text-muted{color:var(--muted2)}
+
+/* PAGE HERO */
+.page-hero{padding:9rem 2rem 5rem;text-align:center;position:relative;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(120px);pointer-events:none}
+.orb-1{width:500px;height:500px;background:radial-gradient(circle,rgba(123,94,167,.12) 0%,transparent 70%);top:-150px;left:50%;transform:translateX(-50%)}
+.page-hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(123,94,167,.1);border:1px solid rgba(123,94,167,.25);border-radius:100px;padding:.3rem 1rem;font-size:.76rem;font-weight:600;color:#a58fd4;margin-bottom:1.5rem;letter-spacing:.04em;text-transform:uppercase}
+.page-hero-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:#a58fd4}
+.page-hero p{color:var(--muted2);font-size:1.1rem;max-width:560px;margin:1.2rem auto 2.5rem;line-height:1.7}
+.hero-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.btn-lg{padding:.8rem 1.9rem;font-size:.95rem;border-radius:10px;font-weight:700}
+.btn-outline-lg{padding:.8rem 1.9rem;font-size:.95rem;border-radius:10px;font-weight:500;color:var(--muted2);border:1px solid var(--border);text-decoration:none;transition:all .2s;display:inline-block}
+.btn-outline-lg:hover{color:var(--text);border-color:rgba(255,255,255,.22)}
+
+/* PRESTATIONS */
+.prest-section{padding:6rem 0}
+.prest-block{margin-bottom:5rem}
+.prest-block:last-child{margin-bottom:0}
+.prest-header{display:flex;align-items:flex-start;gap:1.25rem;margin-bottom:2rem;padding-bottom:2rem;border-bottom:1px solid var(--border)}
+.prest-icon{width:54px;height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+.prest-header-text .cat{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.35rem}
+.prest-header-text h2{font-size:clamp(1.4rem,2.5vw,2rem);margin-bottom:.4rem}
+.prest-header-text p{color:var(--muted2);font-size:.9rem;max-width:600px;line-height:1.6}
+.prest-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
+.prest-card{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:1.6rem;transition:all .22s}
+.prest-card:hover{border-color:rgba(0,229,160,.2);transform:translateY(-2px);box-shadow:0 14px 32px rgba(0,0,0,.4)}
+.prest-card h3{font-size:.95rem;margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem}
+.prest-card p{color:var(--muted2);font-size:.845rem;line-height:1.6}
+.prest-card .incl{margin-top:1rem;display:flex;flex-direction:column;gap:.3rem}
+.incl-item{display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:var(--muted2)}
+.incl-item::before{content:'✓';color:var(--accent);font-weight:700;flex-shrink:0}
+
+/* ENGAGEMENTS */
+.engagements-section{padding:6rem 0;background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.eng-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:3rem}
+.eng-card{text-align:center;padding:2rem 1.25rem;background:var(--surface);border:1px solid var(--border);border-radius:14px}
+.eng-num{font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;color:var(--accent);margin-bottom:.4rem}
+.eng-card h3{font-size:.9rem;margin-bottom:.4rem}
+.eng-card p{color:var(--muted2);font-size:.8rem;line-height:1.5}
+
+/* CTA */
+.cta-section{padding:7rem 0}
+.cta-box{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:4.5rem 3rem;text-align:center;overflow:hidden}
+.cta-box::before{content:'';position:absolute;inset:-1px;background:linear-gradient(135deg,rgba(123,94,167,.12),transparent 50%,rgba(0,229,160,.09));border-radius:inherit;z-index:0}
+.cta-box>*{position:relative;z-index:1}
+.cta-box h2{margin-bottom:.9rem}
+.cta-box p{color:var(--muted2);margin-bottom:2.2rem;max-width:420px;margin-left:auto;margin-right:auto}
+.cta-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:4rem 0 2rem;position:relative;z-index:1}
+.footer-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem}
+.footer-brand p{color:var(--muted);font-size:.85rem;line-height:1.65;margin-top:.75rem;max-width:210px}
+.footer-col h4{font-family:'Syne',sans-serif;font-size:.85rem;font-weight:700;margin-bottom:1rem}
+.footer-col a{display:block;color:var(--muted);font-size:.85rem;text-decoration:none;margin-bottom:.45rem;transition:color .2s}
+.footer-col a:hover{color:var(--text)}
+.footer-bottom{border-top:1px solid var(--border);padding-top:1.8rem;display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:.78rem;flex-wrap:wrap;gap:1rem}
+.footer-links{display:flex;gap:1.4rem}
+.footer-links a{color:var(--muted);text-decoration:none;font-size:.78rem}
+.footer-links a:hover{color:var(--text)}
+
+@media(max-width:900px){
+  .nav-links,.nav-cta{display:none}.hamburger{display:block}
+  .prest-cards{grid-template-columns:1fr 1fr}
+  .eng-grid{grid-template-columns:1fr 1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:580px){
+  nav{padding:0 1.2rem}
+  .prest-cards{grid-template-columns:1fr}
+  .prest-header{flex-direction:column}
+  .eng-grid{grid-template-columns:1fr 1fr}
+  .footer-grid{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo"><div class="logo-dot"></div>ORMY<span>Scripts</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Accueil</a></li>
+    <li><a href="automatisations.html">Automatisations</a></li>
+    <li><a href="prestations.html" class="active">Prestations</a></li>
+    <li><a href="tarifs.html">Tarifs</a></li>
+    <li><a href="reseaux-sociaux.html">Réseaux sociaux</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="tarifs.html" class="btn-ghost">Voir les tarifs</a>
+    <a href="/cdn-cgi/l/email-protection#11727e7f65707265517e637c68627263786165623f7763" class="btn-primary">Nous contacter</a>
+  </div>
+  <button class="hamburger" onclick="document.getElementById('mob').classList.add('open')">☰</button>
+</nav>
+<div class="mobile-menu" id="mob">
+  <button class="close-btn" onclick="document.getElementById('mob').classList.remove('open')">✕</button>
+  <a href="index.html">Accueil</a>
+  <a href="automatisations.html">Automatisations</a>
+  <a href="prestations.html" class="active">Prestations</a>
+  <a href="tarifs.html">Tarifs</a>
+  <a href="reseaux-sociaux.html">Réseaux sociaux</a>
+  <a href="/cdn-cgi/l/email-protection#b1d2dedfc5d0d2c5f1dec3dcc8c2d2c3d8c1c5c29fd7c3" style="color:var(--accent)">Nous contacter</a>
+</div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="orb orb-1"></div>
+  <div class="page-hero-badge">Maintenance, Services & Accompagnement</div>
+  <h1>Des prestations<br><span style="color:var(--accent)">sur mesure</span> pour votre succès.</h1>
+  <p>Maintenance préventive, formation, audit, intégration d'outils — nous sommes votre partenaire technique de confiance, sur site ou à distance.</p>
+  <div class="hero-actions">
+    <a href="tarifs.html" class="btn-primary btn-lg">Voir les tarifs →</a>
+    <a href="/cdn-cgi/l/email-protection#dfbcb0b1abbebcab9fb0adb2a6acbcadb6afabacf1b9ad" class="btn-outline-lg">Nous contacter</a>
+  </div>
+</section>
+
+<!-- PRESTATIONS -->
+<section class="prest-section" id="maintenance">
+  <div class="container">
+
+    <!-- MAINTENANCE -->
+    <div class="prest-block reveal">
+      <div class="prest-header">
+        <div class="prest-icon" style="background:rgba(0,229,160,.1)">🛠️</div>
+        <div class="prest-header-text">
+          <div class="cat" style="color:var(--accent)">Maintenance</div>
+          <h2>Maintenance corrective & préventive</h2>
+          <p>On surveille, on corrige, on anticipe. Vos outils restent opérationnels en permanence, sans que vous ayez à vous en soucier.</p>
+        </div>
+      </div>
+      <div class="prest-cards">
+        <div class="prest-card">
+          <h3>🔍 Maintenance corrective</h3>
+          <p>Diagnostic et correction rapide des scripts, automatisations et outils défaillants. Intervention sous 24h en semaine.</p>
+          <div class="incl">
+            <div class="incl-item">Analyse du dysfonctionnement</div>
+            <div class="incl-item">Correction du bug ou de l'erreur</div>
+            <div class="incl-item">Tests de non-régression</div>
+            <div class="incl-item">Rapport d'intervention</div>
+          </div>
+        </div>
+        <div class="prest-card">
+          <h3>🛡️ Maintenance préventive</h3>
+          <p>Surveillance régulière, mises à jour et revue de code pour éviter les pannes avant qu'elles surviennent.</p>
+          <div class="incl">
+            <div class="incl-item">Revue mensuelle des scripts</div>
+            <div class="incl-item">Mise à jour des dépendances</div>
+            <div class="incl-item">Monitoring et alertes proactives</div>
+            <div class="incl-item">Compte-rendu mensuel</div>
+          </div>
+        </div>
+        <div class="prest-card">
+          <h3>📈 Optimisation continue</h3>
+          <p>Amélioration des performances et de la fiabilité de vos scripts existants. Moins de temps d'exécution, plus de robustesse.</p>
+          <div class="incl">
+            <div class="incl-item">Profilage et benchmarking</div>
+            <div class="incl-item">Refactoring du code</div>
+            <div class="incl-item">Réduction des temps d'exécution</div>
+            <div class="incl-item">Documentation mise à jour</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORMATION -->
+    <div class="prest-block reveal" id="formation" style="transition-delay:.05s">
+      <div class="prest-header">
+        <div class="prest-icon" style="background:rgba(232,168,56,.1)">🎓</div>
+        <div class="prest-header-text">
+          <div class="cat" style="color:var(--amber)">Formation</div>
+          <h2>Formation & montée en compétences</h2>
+          <p>Sessions pratiques sur site ou en visio pour que vos équipes gagnent en autonomie sur leurs outils numériques.</p>
+        </div>
+      </div>
+      <div class="prest-cards">
+        <div class="prest-card">
+          <h3>💻 Formation sur site</h3>
+          <p>Intervention directement dans vos locaux. Formation en présentiel adaptée à votre contexte et vos outils spécifiques.</p>
+          <div class="incl">
+            <div class="incl-item">Audit préalable des besoins</div>
+            <div class="incl-item">Programme personnalisé</div>
+            <div class="incl-item">Exercices pratiques sur vos cas</div>
+            <div class="incl-item">Support de cours fourni</div>
+          </div>
+        </div>
+        <div class="prest-card">
+          <h3>📹 Formation en visio</h3>
+          <p>Sessions 2h ou demi-journée en visioconférence. Idéal pour des équipes dispersées ou un suivi régulier.</p>
+          <div class="incl">
+            <div class="incl-item">Sessions Zoom / Teams / Meet</div>
+            <div class="incl-item">Partage d'écran interactif</div>
+            <div class="incl-item">Enregistrement disponible</div>
+            <div class="incl-item">Q&A dédié en fin de session</div>
+          </div>
+        </div>
+        <div class="prest-card">
+          <h3>📚 Accompagnement individuel</h3>
+          <p>Coaching one-to-one pour les profils techniques qui souhaitent progresser rapidement sur des compétences ciblées.</p>
+          <div class="incl">
+            <div class="incl-item">Plan de progression personnalisé</div>
+            <div class="incl-item">Revue de code commentée</div>
+            <div class="incl-item">Projets guidés concrets</div>
+            <div class="incl-item">Accès messagerie entre sessions</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUDIT -->
+    <div class="prest-block reveal" id="audit" style="transition-delay:.1s">
+      <div class="prest-header">
+        <div class="prest-icon" style="background:rgba(59,130,246,.1)">🔎</div>
+        <div class="prest-header-text">
+          <div class="cat" style="color:#7eb0f8">Audit & Conseil</div>
+          <h2>Audit technique & conseil stratégique</h2>
+          <p>Nous analysons votre infrastructure technique, vos workflows et vos outils pour identifier les opportunités d'amélioration.</p>
+        </div>
+      </div>
+      <div class="prest-cards">
+        <div class="prest-card">
+          <h3>🔐 Audit sécurité</h3>
+          <p>Revue complète de la sécurité de vos scripts, accès, mots de passe et données sensibles. Conformité RGPD incluse.</p>
+          <div class="incl">
+            <div class="incl-item">Analyse des vulnérabilités</div>
+            <div class="incl-item">Revue des droits d'accès</div>
+            <div class="incl-item">Conformité RGPD</div>
+            <div class="incl-item">Rapport de recommandations</div>
+          </div>
+        </div>
+        <div class="prest-card">
+          <h3>⚙️ Audit d'automatisation</h3>
+          <p>Cartographie de vos processus manuels, identification des gains potentiels et priorisation des chantiers d'automatisation.</p>
+          <div class="incl">
+            <div class="incl-item">Atelier de découverte (2h)</div>
+            <div class="incl-item">Carte des processus existants</div>
+            <div class="incl-item">Estimation des gains</div>
+            <div class="incl-item">Roadmap d'automatisation</div>
+          </div>
+        </div>
+        <div class="prest-card">
+          <h3>🏗️ Conseil en architecture</h3>
+          <p>Recommandations sur le choix de vos outils, l'architecture de vos pipelines et l'organisation de votre stack technique.</p>
+          <div class="incl">
+            <div class="incl-item">Analyse du stack actuel</div>
+            <div class="incl-item">Comparatif d'alternatives</div>
+            <div class="incl-item">Plan de migration si nécessaire</div>
+            <div class="incl-item">Suivi de la mise en œuvre</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTEGRATION -->
+    <div class="prest-block reveal" id="integration" style="transition-delay:.15s">
+      <div class="prest-header">
+        <div class="prest-icon" style="background:rgba(123,94,167,.1)">🔗</div>
+        <div class="prest-header-text">
+          <div class="cat" style="color:#a58fd4">Intégrations</div>
+          <h2>Intégrations & connecteurs sur mesure</h2>
+          <p>Nous connectons vos outils entre eux pour créer un écosystème cohérent et automatisé, sans friction ni double saisie.</p>
+        </div>
+      </div>
+      <div class="prest-cards">
+        <div class="prest-card">
+          <h3>🔌 Connecteur API</h3>
+          <p>Développement de connecteurs sur mesure entre vos logiciels métier, qu'ils disposent ou non d'une API native.</p>
+          <div class="incl">
+            <div class="incl-item">Analyse des APIs disponibles</div>
+            <div class="incl-item">Développement du connecteur</div>
+            <div class="incl-item">Tests d'intégration complets</div>
+            <div class="incl-item">Documentation technique</div>
+          </div>
+        </div>
+        <div class="prest-card">
+          <h3>🗄️ Migration de données</h3>
+          <p>Migration sécurisée de vos données d'un outil vers un autre, avec validation, rollback et zéro perte de données.</p>
+          <div class="incl">
+            <div class="incl-item">Audit des données sources</div>
+            <div class="incl-item">Mapping et transformation</div>
+            <div class="incl-item">Migration avec point de contrôle</div>
+            <div class="incl-item">Validation post-migration</div>
+          </div>
+        </div>
+        <div class="prest-card">
+          <h3>📡 Webhooks & événements</h3>
+          <p>Mise en place de systèmes événementiels pour que vos outils réagissent en temps réel aux actions de vos utilisateurs.</p>
+          <div class="incl">
+            <div class="incl-item">Architecture événementielle</div>
+            <div class="incl-item">Configuration des webhooks</div>
+            <div class="incl-item">Gestion des erreurs et retry</div>
+            <div class="incl-item">Monitoring des flux</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ENGAGEMENTS -->
+<section class="engagements-section">
+  <div class="container">
+    <div class="reveal" style="text-align:center">
+      <div class="section-label" style="justify-content:center">Nos engagements</div>
+      <h2>Ce que vous pouvez attendre de nous.</h2>
+    </div>
+    <div class="eng-grid reveal" style="transition-delay:.1s">
+      <div class="eng-card">
+        <div class="eng-num">24h</div>
+        <h3>Délai de réponse</h3>
+        <p>Toute demande reçoit une réponse qualifiée sous 24h ouvrées.</p>
+      </div>
+      <div class="eng-card">
+        <div class="eng-num">100%</div>
+        <h3>Code documenté</h3>
+        <p>Chaque script livré est commenté et accompagné d'une documentation claire.</p>
+      </div>
+      <div class="eng-card">
+        <div class="eng-num">🇫🇷</div>
+        <h3>Basé en France</h3>
+        <p>Équipe francophone, données hébergées en France, conformité RGPD garantie.</p>
+      </div>
+      <div class="eng-card">
+        <div class="eng-num">∞</div>
+        <h3>Support inclus</h3>
+        <p>Questions et ajustements mineurs inclus dans le mois suivant chaque livraison.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-box reveal">
+      <div class="section-label" style="justify-content:center">Parlons de votre projet</div>
+      <h2>Besoin d'un accompagnement<br>technique de confiance ?</h2>
+      <p>Contactez-nous pour discuter de vos besoins. Premier échange gratuit, sans engagement.</p>
+      <div class="cta-actions">
+        <a href="/cdn-cgi/l/email-protection#ef8c80819b8e8c9baf809d82969c8c9d869f9b9cc1899d" class="btn-primary btn-lg">Prendre contact →</a>
+        <a href="tarifs.html" class="btn-outline-lg">Voir les tarifs</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" class="logo" style="font-size:1.1rem"><div class="logo-dot"></div>ORMY<span>Scripts</span></a>
+        <p>Scripts intelligents & automatisation pour les entreprises modernes. Basé en France.</p>
+      </div>
+      <div class="footer-col"><h4>Navigation</h4><a href="index.html">Accueil</a><a href="automatisations.html">Automatisations</a><a href="prestations.html">Prestations</a><a href="tarifs.html">Tarifs</a></div>
+      <div class="footer-col"><h4>Services</h4><a href="#maintenance">Maintenance</a><a href="#formation">Formation</a><a href="#audit">Audit & Conseil</a><a href="#integration">Intégrations</a></div>
+      <div class="footer-col"><h4>Contact</h4><a href="/cdn-cgi/l/email-protection#81e2eeeff5e0e2f5c1eef3ecf8f2e2f3e8f1f5f2afe7f3"><span class="__cf_email__" data-cfemail="91f2feffe5f0f2e5d1fee3fce8e2f2e3f8e1e5e2bff7e3">[email&#160;protected]</span></a><a href="tarifs.html">Demander un devis</a></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 ORMYScripts. Tous droits réservés. 🇫🇷</span>
+      <div class="footer-links"><a href="#">Me

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Automatisations — ORMYScripts</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07080b;--bg2:#0d0f16;--surface:#12141d;--surface2:#181b28;--border:rgba(255,255,255,0.07);--accent:#00e5a0;--accent-d:#00b87d;--violet:#7b5ea7;--amber:#e8a838;--text:#eef0f5;--muted:#636978;--muted2:#959aaa}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:400;line-height:1.6;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:.022}
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;height:62px;background:rgba(7,8,11,0.88);backdrop-filter:blur(22px);border-bottom:1px solid var(--border)}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.25rem;letter-spacing:-.02em;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:.45rem}
+.logo span{color:var(--accent)}
+.logo-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2.2s ease-in-out infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.65)}}
+.nav-links{display:flex;align-items:center;gap:1.8rem;list-style:none}
+.nav-links a{color:var(--muted2);text-decoration:none;font-size:.875rem;font-weight:500;padding:.3rem 0;border-bottom:2px solid transparent;transition:all .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--text);border-color:var(--accent)}
+.nav-links a.active{color:var(--accent)}
+.nav-cta{display:flex;align-items:center;gap:.65rem}
+.btn-ghost{color:var(--muted2);text-decoration:none;font-size:.85rem;font-weight:500;padding:.45rem .9rem;border:1px solid var(--border);border-radius:8px;transition:all .2s}
+.btn-ghost:hover{color:var(--text);border-color:rgba(255,255,255,.2)}
+.btn-primary{background:var(--accent);color:#07080b;text-decoration:none;font-size:.85rem;font-weight:700;padding:.45rem 1.1rem;border-radius:8px;transition:all .2s}
+.btn-primary:hover{background:var(--accent-d);transform:translateY(-1px)}
+.hamburger{display:none;background:none;border:1px solid var(--border);color:var(--text);padding:.35rem .65rem;border-radius:6px;cursor:pointer;font-size:1.1rem}
+.mobile-menu{display:none;position:fixed;inset:0;z-index:190;background:rgba(7,8,11,.97);backdrop-filter:blur(20px);flex-direction:column;align-items:center;justify-content:center;gap:2rem}
+.mobile-menu.open{display:flex}
+.mobile-menu a{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:700;color:var(--text);text-decoration:none;letter-spacing:-.03em;transition:color .2s}
+.mobile-menu a:hover,.mobile-menu a.active{color:var(--accent)}
+.close-btn{position:absolute;top:1.2rem;right:1.5rem;background:none;border:none;color:var(--muted2);font-size:1.8rem;cursor:pointer}
+.container{max-width:1180px;margin:0 auto;padding:0 2rem}
+section{position:relative;z-index:1}
+h1{font-family:'Syne',sans-serif;font-size:clamp(2.2rem,5vw,4.2rem);font-weight:800;letter-spacing:-.04em;line-height:1.06}
+h2{font-family:'Syne',sans-serif;font-size:clamp(1.6rem,3vw,2.5rem);font-weight:800;letter-spacing:-.035em;line-height:1.1}
+h3{font-family:'Syne',sans-serif;font-weight:700;letter-spacing:-.02em}
+.section-label{display:inline-flex;align-items:center;gap:.5rem;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:.9rem}
+.section-label::before{content:'';width:18px;height:2px;background:var(--accent)}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .65s ease,transform .65s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.text-muted{color:var(--muted2)}
+
+/* PAGE HERO */
+.page-hero{padding:9rem 2rem 5rem;text-align:center;position:relative;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(120px);pointer-events:none}
+.orb-1{width:500px;height:500px;background:radial-gradient(circle,rgba(0,229,160,.1) 0%,transparent 70%);top:-150px;left:50%;transform:translateX(-50%)}
+.page-hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.2);border-radius:100px;padding:.3rem 1rem;font-size:.76rem;font-weight:600;color:var(--accent);margin-bottom:1.5rem;letter-spacing:.04em;text-transform:uppercase}
+.page-hero-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.page-hero p{color:var(--muted2);font-size:1.1rem;max-width:560px;margin:1.2rem auto 2.5rem;line-height:1.7}
+.hero-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.btn-lg{padding:.8rem 1.9rem;font-size:.95rem;border-radius:10px;font-weight:700}
+.btn-outline-lg{padding:.8rem 1.9rem;font-size:.95rem;border-radius:10px;font-weight:500;color:var(--muted2);border:1px solid var(--border);text-decoration:none;transition:all .2s;display:inline-block}
+.btn-outline-lg:hover{color:var(--text);border-color:rgba(255,255,255,.22)}
+
+/* CATEGORIES */
+.categories-section{padding:5rem 0;background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.cat-tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:3rem}
+.cat-tab{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.45rem 1rem;font-size:.83rem;font-weight:600;cursor:pointer;color:var(--muted2);transition:all .2s}
+.cat-tab:hover,.cat-tab.active{background:rgba(0,229,160,.1);border-color:rgba(0,229,160,.3);color:var(--accent)}
+.auto-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
+.auto-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.75rem;transition:all .25s;cursor:default}
+.auto-card:hover{border-color:rgba(0,229,160,.25);transform:translateY(-3px);box-shadow:0 16px 36px rgba(0,0,0,.4)}
+.auto-card .badge{display:inline-block;font-size:.65rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:.2rem .6rem;border-radius:5px;margin-bottom:1rem}
+.badge-green{background:rgba(0,229,160,.12);color:var(--accent)}
+.badge-violet{background:rgba(123,94,167,.15);color:#a58fd4}
+.badge-amber{background:rgba(232,168,56,.12);color:var(--amber)}
+.badge-blue{background:rgba(59,130,246,.12);color:#7eb0f8}
+.auto-card h3{font-size:1rem;margin-bottom:.5rem}
+.auto-card p{color:var(--muted2);font-size:.855rem;line-height:1.6}
+.auto-card .tools{margin-top:1rem;display:flex;flex-wrap:wrap;gap:.35rem}
+.tool-tag{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:.15rem .55rem;font-size:.72rem;color:var(--muted2);font-weight:500}
+
+/* PROCESS */
+.process-section{padding:7rem 0}
+.process-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:3.5rem;position:relative}
+.process-grid::before{content:'';position:absolute;top:28px;left:10%;right:10%;height:1px;background:linear-gradient(to right,transparent,var(--border) 20%,var(--border) 80%,transparent);z-index:0}
+.step{text-align:center;position:relative;z-index:1}
+.step-num{width:56px;height:56px;border-radius:50%;border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--accent);margin:0 auto 1.25rem}
+.step h3{font-size:.95rem;margin-bottom:.45rem}
+.step p{color:var(--muted2);font-size:.83rem;line-height:1.55}
+
+/* COMPARISON */
+.compare-section{padding:7rem 0;background:var(--bg2);border-top:1px solid var(--border)}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:3.5rem}
+.compare-box{border-radius:16px;padding:2rem;border:1px solid var(--border)}
+.compare-box.bad{background:rgba(255,255,255,.02)}
+.compare-box.good{background:rgba(0,229,160,.04);border-color:rgba(0,229,160,.2)}
+.compare-box h3{font-size:1.05rem;margin-bottom:1.4rem;padding-bottom:.9rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.5rem}
+.compare-item{display:flex;align-items:flex-start;gap:.7rem;padding:.65rem 0;border-bottom:1px solid var(--border);font-size:.875rem;color:var(--muted2)}
+.compare-item:last-child{border-bottom:none}
+.check{color:var(--accent);flex-shrink:0;margin-top:2px}
+.cross{color:#ff5f57;flex-shrink:0;margin-top:2px}
+
+/* INTEGRATIONS */
+.integrations-section{padding:7rem 0}
+.int-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:1rem;margin-top:3rem}
+.int-chip{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center;transition:all .2s}
+.int-chip:hover{border-color:rgba(0,229,160,.25);transform:translateY(-2px)}
+.int-chip .emoji{font-size:1.5rem;display:block;margin-bottom:.4rem}
+.int-chip span{font-size:.75rem;color:var(--muted2);font-weight:500}
+
+/* CTA */
+.cta-section{padding:7rem 0}
+.cta-box{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:22px;padding:4.5rem 3rem;text-align:center;overflow:hidden}
+.cta-box::before{content:'';position:absolute;inset:-1px;background:linear-gradient(135deg,rgba(0,229,160,.13),transparent 50%,rgba(123,94,167,.09));border-radius:inherit;z-index:0}
+.cta-box>*{position:relative;z-index:1}
+.cta-box h2{margin-bottom:.9rem}
+.cta-box p{color:var(--muted2);margin-bottom:2.2rem;max-width:420px;margin-left:auto;margin-right:auto}
+.cta-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:4rem 0 2rem;position:relative;z-index:1}
+.footer-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem}
+.footer-brand p{color:var(--muted);font-size:.85rem;line-height:1.65;margin-top:.75rem;max-width:210px}
+.footer-col h4{font-family:'Syne',sans-serif;font-size:.85rem;font-weight:700;margin-bottom:1rem}
+.footer-col a{display:block;color:var(--muted);font-size:.85rem;text-decoration:none;margin-bottom:.45rem;transition:color .2s}
+.footer-col a:hover{color:var(--text)}
+.footer-bottom{border-top:1px solid var(--border);padding-top:1.8rem;display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:.78rem;flex-wrap:wrap;gap:1rem}
+.footer-links{display:flex;gap:1.4rem}
+.footer-links a{color:var(--muted);text-decoration:none;font-size:.78rem}
+.footer-links a:hover{color:var(--text)}
+
+@media(max-width:900px){
+  .nav-links,.nav-cta{display:none}.hamburger{display:block}
+  .auto-grid{grid-template-columns:1fr 1fr}
+  .process-grid{grid-template-columns:1fr 1fr}
+  .process-grid::before{display:none}
+  .compare-grid{grid-template-columns:1fr}
+  .int-grid{grid-template-columns:repeat(3,1fr)}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:580px){
+  nav{padding:0 1.2rem}
+  .auto-grid{grid-template-columns:1fr}
+  .int-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo"><div class="logo-dot"></div>ORMY<span>Scripts</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Accueil</a></li>
+    <li><a href="automatisations.html" class="active">Automatisations</a></li>
+    <li><a href="prestations.html">Prestations</a></li>
+    <li><a href="tarifs.html">Tarifs</a></li>
+    <li><a href="reseaux-sociaux.html">Réseaux sociaux</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="tarifs.html" class="btn-ghost">Voir les tarifs</a>
+    <a href="/cdn-cgi/l/email-protection#9cfff3f2e8fdffe8dcf3eef1e5efffeef5ece8efb2faee" class="btn-primary">Nous contacter</a>
+  </div>
+  <button class="hamburger" onclick="document.getElementById('mob').classList.add('open')">☰</button>
+</nav>
+<div class="mobile-menu" id="mob">
+  <button class="close-btn" onclick="document.getElementById('mob').classList.remove('open')">✕</button>
+  <a href="index.html">Accueil</a>
+  <a href="automatisations.html" class="active">Automatisations</a>
+  <a href="prestations.html">Prestations</a>
+  <a href="tarifs.html">Tarifs</a>
+  <a href="reseaux-sociaux.html">Réseaux sociaux</a>
+  <a href="/cdn-cgi/l/email-protection#01626e6f75606275416e736c78726273687175722f6773" style="color:var(--accent)">Nous contacter</a>
+</div>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="orb orb-1"></div>
+  <div class="page-hero-badge">Automatisations intelligentes</div>
+  <h1>Éliminez les tâches<br><span style="color:var(--accent)">répétitives</span> pour toujours.</h1>
+  <p>Scripts sur mesure, workflows automatisés et pipelines de données robustes. Nous construisons les automatisations qui libèrent vos équipes.</p>
+  <div class="hero-actions">
+    <a href="/cdn-cgi/l/email-protection#3c5f5352485d5f487c534e51454f5f4e554c484f125a4e" class="btn-primary btn-lg">Demander un devis →</a>
+    <a href="tarifs.html" class="btn-outline-lg">Voir les tarifs</a>
+  </div>
+</section>
+
+<!-- AUTOMATISATIONS GRID -->
+<section class="categories-section">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Nos automatisations</div>
+      <h2>Ce qu'on automatise pour vous</h2>
+    </div>
+    <div class="cat-tabs reveal" style="transition-delay:.05s">
+      <button class="cat-tab active">Tous</button>
+      <button class="cat-tab">Données</button>
+      <button class="cat-tab">Intégrations</button>
+      <button class="cat-tab">Reporting</button>
+      <button class="cat-tab">Déploiement</button>
+    </div>
+    <div class="auto-grid reveal" style="transition-delay:.1s">
+      <div class="auto-card">
+        <span class="badge badge-green">Données</span>
+        <h3>Pipeline ETL automatisé</h3>
+        <p>Extraction, transformation et chargement de vos données entre systèmes hétérogènes. Planification, logs et alertes inclus.</p>
+        <div class="tools"><span class="tool-tag">Python</span><span class="tool-tag">PostgreSQL</span><span class="tool-tag">Airflow</span></div>
+      </div>
+      <div class="auto-card">
+        <span class="badge badge-violet">Intégrations</span>
+        <h3>Synchronisation CRM ↔ ERP</h3>
+        <p>Maintenez la cohérence entre votre CRM et votre ERP en temps réel. Fini les doubles saisies et les erreurs de synchro.</p>
+        <div class="tools"><span class="tool-tag">API REST</span><span class="tool-tag">Webhooks</span><span class="tool-tag">HubSpot</span></div>
+      </div>
+      <div class="auto-card">
+        <span class="badge badge-amber">Reporting</span>
+        <h3>Rapports automatiques</h3>
+        <p>Génération et envoi automatique de rapports PDF ou Excel à intervalles réguliers. Zéro intervention manuelle.</p>
+        <div class="tools"><span class="tool-tag">Python</span><span class="tool-tag">Excel</span><span class="tool-tag">Email</span></div>
+      </div>
+      <div class="auto-card">
+        <span class="badge badge-blue">Déploiement</span>
+        <h3>CI/CD & déploiement continu</h3>
+        <p>Pipeline de déploiement complet : tests automatiques, build, mise en production et rollback en cas d'erreur.</p>
+        <div class="tools"><span class="tool-tag">GitHub Actions</span><span class="tool-tag">Docker</span><span class="tool-tag">SSH</span></div>
+      </div>
+      <div class="auto-card">
+        <span class="badge badge-green">Données</span>
+        <h3>Scraping & veille automatique</h3>
+        <p>Collecte automatisée de données web, tarifs concurrents ou actualités. Données propres et structurées livrées dans vos outils.</p>
+        <div class="tools"><span class="tool-tag">Python</span><span class="tool-tag">Playwright</span><span class="tool-tag">Airtable</span></div>
+      </div>
+      <div class="auto-card">
+        <span class="badge badge-violet">Intégrations</span>
+        <h3>Automatisation des factures</h3>
+        <p>Génération automatique de factures à partir de vos données de vente, envoi par email et archivage comptable.</p>
+        <div class="tools"><span class="tool-tag">Stripe</span><span class="tool-tag">PDF</span><span class="tool-tag">Notion</span></div>
+      </div>
+      <div class="auto-card">
+        <span class="badge badge-amber">Reporting</span>
+        <h3>Dashboard temps réel</h3>
+        <p>Tableaux de bord interactifs connectés à vos sources de données. KPIs à jour, accessible depuis n'importe quel appareil.</p>
+        <div class="tools"><span class="tool-tag">Grafana</span><span class="tool-tag">API</span><span class="tool-tag">SQL</span></div>
+      </div>
+      <div class="auto-card">
+        <span class="badge badge-blue">Déploiement</span>
+        <h3>Sauvegarde & archivage auto</h3>
+        <p>Sauvegarde planifiée de vos bases de données, fichiers et configurations. Chiffrement et stockage cloud sécurisé.</p>
+        <div class="tools"><span class="tool-tag">Bash</span><span class="tool-tag">AWS S3</span><span class="tool-tag">Cron</span></div>
+      </div>
+      <div class="auto-card">
+        <span class="badge badge-green">Données</span>
+        <h3>Nettoyage & normalisation</h3>
+        <p>Scripts de nettoyage, déduplication et normalisation de vos jeux de données. Qualité garantie avant exploitation.</p>
+        <div class="tools"><span class="tool-tag">Python</span><span class="tool-tag">Pandas</span><span class="tool-tag">SQL</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process-section">
+  <div class="container">
+    <div class="reveal" style="text-align:center;max-width:580px;margin:0 auto 0">
+      <div class="section-label" style="justify-content:center">Notre méthode</div>
+      <h2>De votre besoin au script,<br><span class="text-muted">en 4 étapes.</span></h2>
+    </div>
+    <div class="process-grid reveal" style="transition-delay:.1s">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h3>Analyse du besoin</h3>
+        <p>On cartographie votre processus actuel, ses frictions et son potentiel d'automatisation.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h3>Conception</h3>
+        <p>Architecture du script, choix technologiques, gestion des erreurs et plan de tests.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h3>Développement</h3>
+        <p>Code propre, documenté et versionné. Revue et ajustements itératifs avec vous.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <h3>Mise en production</h3>
+        <p>Déploiement, monitoring et formation. Le script tourne, vous ne touchez plus à rien.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section class="compare-section">
+  <div class="container">
+    <div class="reveal" style="text-align:center">
+      <div class="section-label" style="justify-content:center">Avant / Après</div>
+      <h2>La différence en un coup d'œil.</h2>
+    </div>
+    <div class="compare-grid reveal" style="transition-delay:.1s">
+      <div class="compare-box bad">
+        <h3>😓 Sans automatisation</h3>
+        <div class="compare-item"><span class="cross">✗</span>Saisies manuelles répétées plusieurs fois par jour</div>
+        <div class="compare-item"><span class="cross">✗</span>Erreurs humaines coûteuses et difficiles à détecter</div>
+        <div class="compare-item"><span class="cross">✗</span>Rapports préparés manuellement chaque lundi matin</div>
+        <div class="compare-item"><span class="cross">✗</span>Données éparpillées, jamais à jour au même endroit</div>
+        <div class="compare-item"><span class="cross">✗</span>Heures perdues sur des tâches sans valeur ajoutée</div>
+      </div>
+      <div class="compare-box good">
+        <h3>🚀 Avec ORMYScripts</h3>
+        <div class="compare-item"><span class="check">✓</span>Données synchronisées en temps réel, automatiquement</div>
+        <div class="compare-item"><span class="check">✓</span>Zéro erreur de saisie, processus 100 % fiable</div>
+        <div class="compare-item"><span class="check">✓</span>Rapports générés et envoyés automatiquement</div>
+        <div class="compare-item"><span class="check">✓</span>Source unique de vérité, toujours à jour</div>
+        <div class="compare-item"><span class="check">✓</span>Vos équipes se concentrent sur ce qui crée de la valeur</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTEGRATIONS -->
+<section class="integrations-section">
+  <div class="container">
+    <div class="reveal" style="text-align:center;margin-bottom:0">
+      <div class="section-label" style="justify-content:center">Écosystème</div>
+      <h2>Compatible avec vos outils.</h2>
+      <p class="text-muted" style="margin-top:.5rem">On s'intègre dans votre stack existant sans tout réinventer.</p>
+    </div>
+    <div class="int-grid reveal" style="transition-delay:.1s">
+      <div class="int-chip"><span class="emoji">🐍</span><span>Python</span></div>
+      <div class="int-chip"><span class="emoji">⚡</span><span>Node.js</span></div>
+      <div class="int-chip"><span class="emoji">🐚</span><span>Bash</span></div>
+      <div class="int-chip"><span class="emoji">🗄️</span><span>PostgreSQL</span></div>
+      <div class="int-chip"><span class="emoji">🔵</span><span>MongoDB</span></div>
+      <div class="int-chip"><span class="emoji">📊</span><span>Airtable</span></div>
+      <div class="int-chip"><span class="emoji">💬</span><span>Slack</span></div>
+      <div class="int-chip"><span class="emoji">📁</span><span>Google Drive</span></div>
+      <div class="int-chip"><span class="emoji">🔧</span><span>GitHub</span></div>
+      <div class="int-chip"><span class="emoji">📧</span><span>SendGrid</span></div>
+      <div class="int-chip"><span class="emoji">🗺️</span><span>Notion</span></div>
+      <div class="int-chip"><span class="emoji">💳</span><span>Stripe</span></div>
+      <div class="int-chip"><span class="emoji">☁️</span><span>AWS S3</span></div>
+      <div class="int-chip"><span class="emoji">🟣</span><span>HubSpot</span></div>
+      <div class="int-chip"><span class="emoji">🐳</span><span>Docker</span></div>
+      <div class="int-chip"><span class="emoji">📮</span><span>Mailchimp</span></div>
+      <div class="int-chip"><span class="emoji">🟡</span><span>Jira</span></div>
+      <div class="int-chip"><span class="emoji">🤖</span><span>OpenAI API</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-box reveal">
+      <div class="section-label" style="justify-content:center">Parlons de votre projet</div>
+      <h2>Prêt à automatiser ?</h2>
+      <p>Décrivez-nous votre processus le plus chronophage. On vous propose une automatisation en 48h.</p>
+      <div class="cta-actions">
+        <a href="/cdn-cgi/l/email-protection#3f5c50514b5e5c4b7f504d52464c5c4d564f4b4c11594d" class="btn-primary btn-lg">Demander un audit gratuit →</a>
+        <a href="tarifs.html" class="btn-outline-lg">Voir les tarifs</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" class="logo" style="font-size:1.1rem"><div class="logo-dot"></div>ORMY<span>Scripts</span></a>
+        <p>Scripts intelligents & automatisation pour les entreprises modernes. Basé en France.</p>
+      </div>
+      <div class="footer-col"><h4>Navigation</h4><a href="index.html">Accueil</a><a href="automatisations.html">Automatisations</a><a href="prestations.html">Prestations</a><a href="tarifs.html">Tarifs</a></div>
+      <div class="footer-col"><h4>Services</h4><a href="prestations.html#maintenance">Maintenance</a><a href="prestations.html#formation">Formation</a><a href="prestations.html#audit">Audit & Conseil</a><a href="prestations.html#integration">Intégrations</a></div>
+      <div class="footer-col"><h4>Contact</h4><a href="/cdn-cgi/l/email-protection#16757978627775625679647b6f6575647f666265387064"><span class="__cf_email__" data-cfemail="6d0e0203190c0e192d021f00141e0e1f041d191e430b1f">[email&#160;protected]</span></a><a href="tarifs.html">Demander un devis</a></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 ORMYScripts. Tous droits réservés. 🇫🇷</span>
+      <div class="footer-links"><a href="#">Mentions légales</a><a href="#">Confidentialité</a><a href="#">CGV</a></div>
+    </div>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/emai
